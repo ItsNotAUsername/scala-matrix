@@ -111,9 +111,9 @@ class Matrix[T: ClassTag] (val data: Array[Array[T]])(using num: Numeric[T]):
     val a = Array.tabulate(rows, that.cols) {
       (i, j) =>
         var x: T = num.zero
-        for k <- 0 until cols
-            do x = num.plus(x, num.times(data(i)(k), that.data(k)(j)))
-            x
+        for k <- 0 until cols 
+        do x = num.plus(x, num.times(data(i)(k), that.data(k)(j)))
+        x
     }
     new Matrix[T](a)
 
@@ -121,34 +121,34 @@ class Matrix[T: ClassTag] (val data: Array[Array[T]])(using num: Numeric[T]):
     val maxWidth: Int = data.flatten.map(_.toString.length).max
     val sb = new StringBuilder()
     for
-    i <- 0 until rows
-    j <- 0 until cols
+      i <- 0 until rows
+      j <- 0 until cols
     do
       sb ++= data(i)(j).toString.reverse.padTo(maxWidth, ' ').reverse
-    if j == cols - 1
-    then sb += '\n'
-    else sb += ' '
+      if j == cols - 1
+      then sb += '\n'
+      else sb += ' '
     sb.toString
-
-    object Matrix:
+    
+  object Matrix:
         
-      def apply[T: Numeric : ClassTag](a: Array[T], as: Array[T]*): Matrix[T] =
-        new Matrix[T]((a +: as).toArray)
+    def apply[T: Numeric : ClassTag](a: Array[T], as: Array[T]*): Matrix[T] =
+      new Matrix[T]((a +: as).toArray)
 
-      def tabulate[T: Numeric : ClassTag](rows: Int, cols: Int, f: (Int, Int) => T): Matrix[T] =
-        val a = Array.tabulate(rows, cols)(f)
-        new Matrix[T](a)
+    def tabulate[T: Numeric : ClassTag](rows: Int, cols: Int, f: (Int, Int) => T): Matrix[T] =
+      val a = Array.tabulate(rows, cols)(f)
+      new Matrix[T](a)
 
-      def fill[T: Numeric : ClassTag](rows: Int, cols: Int, v: => T): Matrix[T] =
-        val a = Array.fill(rows, cols)(v)
-        new Matrix[T](a)
+    def fill[T: Numeric : ClassTag](rows: Int, cols: Int, v: => T): Matrix[T] =
+      val a = Array.fill(rows, cols)(v)
+      new Matrix[T](a)
 
-      def identity[T: ClassTag](n: Int)(using num: Numeric[T]): Matrix[T] =
-        val a = Array.tabulate(n, n) {
-          (i, j) => if i == j then num.one else num.zero
-        }
-        new Matrix[T](a)
+    def identity[T: ClassTag](n: Int)(using num: Numeric[T]): Matrix[T] =
+      val a = Array.tabulate(n, n) {
+        (i, j) => if i == j then num.one else num.zero
+      }
+      new Matrix[T](a)
 
-      def zero[T: ClassTag](n: Int)(using num: Numeric[T]): Matrix[T] =
-        val a = Array.fill(n, n)(num.zero)
-        new Matrix[T](a)
+    def zero[T: ClassTag](n: Int)(using num: Numeric[T]): Matrix[T] =
+      val a = Array.fill(n, n)(num.zero)
+      new Matrix[T](a)
