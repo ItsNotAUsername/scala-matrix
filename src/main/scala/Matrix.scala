@@ -1,4 +1,5 @@
 import scala.reflect.ClassTag
+import scala.annotation.tailrec
 
 class Matrix[T: ClassTag] (val data: Array[Array[T]])(using num: Numeric[T]):
 
@@ -117,6 +118,37 @@ class Matrix[T: ClassTag] (val data: Array[Array[T]])(using num: Numeric[T]):
     }
     new Matrix[T](a)
 
+  def ^(l: Long): Matrix[T] =
+    if rows != cols then
+      throw new UnsupportedOperationException(
+        "Only a square matrix is conformable for matrix exponentiation")
+
+    @tailrec
+    def binaryPow(n: Long, a: Matrix[T], b: Matrix[T]): Matrix[T] =
+      if n == 0 then
+        Matrix.identity[T](rows)
+      else if n == 1 then
+        a * b
+      else if n % 2 == 0 then
+        binaryPow(n / 2, a * a, b)
+      else
+        binaryPow(n - 1, a, a * b)
+
+    binaryPow(l, this, Matrix.identity[T](rows))
+
+  override def equals(that: Any): Boolean = that match
+    case that: Matrix[T] => rows == that.rows && cols == that.cols && data sameElements that.data
+    case _               => false
+
+  override def hashCode: Int =
+    var hash: Int = 1
+    for
+      i <- 0 until rows
+      j <- 0 until cols
+    do
+      hash = hash * 31 + num.toInt(data(i)(j))
+    hash
+      
   override def toString: String =
     val maxWidth: Int = data.flatten.map(_.toString.length).max
     val sb = new StringBuilder()
