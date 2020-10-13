@@ -137,7 +137,7 @@ class Matrix[T: ClassTag] (val data: Array[Array[T]])(using num: Numeric[T]):
     binaryPow(l, this, Matrix.identity[T](rows))
 
   override def equals(that: Any): Boolean = that match
-    case that: Matrix[T] => rows == that.rows && cols == that.cols && data sameElements that.data
+    case that: Matrix[T] => rows == that.rows && cols == that.cols && (data.flatten sameElements that.data.flatten)
     case _               => false
 
   override def hashCode: Int =
